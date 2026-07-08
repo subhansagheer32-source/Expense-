@@ -1,0 +1,18 @@
+{
+  "name": "MHS Wallet Expense Tracker",
+  "short_name": "MHS Wallet",
+  "description": "Premium Dark Theme Ledger & Expense Management Application.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme-color": "#121212",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "png.2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
