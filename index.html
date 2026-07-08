@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MHS Wallet | Premium Expense Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
+    <link rel="apple-touch-icon" href="png.2.png">
+    <style>
+    :root {
+    --bg-deep: #08090c;
+    --bg-surface: #12141c;
+    --bg-card: #1a1d29;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #00d2ff;
+    --accent-glow: rgba(0, 210, 255, 0.35);
+    --accent-hover: #33e0ff;
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.2);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.2);
+    --border: #242936;
+    --border-glow: #2e374a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    padding: 20px;
+    padding-bottom: 60px;
+    letter-spacing: -0.2px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+/* Header Logo UI */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 4px;
+}
+
+.app-logo {
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 5px;
+    object-fit: contain;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.app-header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@media (min-width: 900px) {
+    .container {
+        grid-template-columns: 2fr 1fr;
+    }
+    .span-full {
+        grid-column: span 2;
+    }
+}
+
+/* Card Structures */
+.card {
+    background: var(--bg-surface);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    border-color: var(--border-glow);
+    box-shadow: 0 12px 35px -8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 210, 255, 0.03);
+}
+
+h2 {
+    margin-bottom: 24px;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.3px;
+}
+
+/* Metrics Dashboard Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (min-width: 600px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-item {
+    background: var(--bg-card);
+    padding: 20px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+.stat-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+}
+
+/* Blue Glow for Highlighted Metrics */
+.stat-item.expense .stat-val { 
+    color: #ff5252; 
+    text-shadow: 0 0 12px rgba(255, 82, 82, 0.2);
+}
+.stat-item.income .stat-val { 
+    color: #00e676; 
+    text-shadow: 0 0 12px rgba(0, 230, 118, 0.2);
+}
+
+/* Interactive Input Controls */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+input, select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+input:hover, select:hover {
+    border-color: #3b4256;
+}
+
+input:focus, select:focus {
+    outline: none;
+    background: var(--bg-surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 16px var(--accent-glow);
+}
+
+input[type="file"] {
+    padding: 11px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* Custom Buttons with Blue/Color Glows */
+button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.25s ease, transform 0.1s ease, box-shadow 0.25s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+button:active { 
+    transform: scale(0.98); 
+}
+
+.btn-primary { 
+    background: var(--accent); 
+    color: #040811; 
+    box-shadow: 0 4px 14px rgba(0, 210, 255, 0.2);
+}
+
+.btn-primary:hover { 
+    background: var(--accent-hover); 
+    box-shadow: 0 6px 20px var(--accent-glow); 
+}
+
+.btn-danger { 
+    background: rgba(239, 68, 68, 0.08); 
+    color: var(--danger); 
+    border: 1px solid rgba(239, 68, 68, 0.2); 
+}
+
+.btn-danger:hover { 
+    background: var(--danger); 
+    color: #ffffff; 
+    box-shadow: 0 6px 16px var(--danger-glow);
+}
+
+.btn-action { 
+    padding: 6px 14px; 
+    font-size: 0.8rem; 
+    border-radius: 8px; 
+    width: auto; 
+}
+
+/* Scrolling Data Streams */
+.list-container {
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.list-container::-webkit-scrollbar {
+    width: 6px;
+}
+.list-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.list-container::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+.list-container::-webkit-scrollbar-thumb:hover {
+    background: var(--border-glow);
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-details .title {
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.item-details .meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Thumbnail Styling */
+.img-preview {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s;
+}
+
+.img-preview:hover { 
+    transform: scale(1.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Calculator Unit Design */
+.calc-wrapper {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid var(--border);
+}
+
+#calc-screen {
+    background: #090b11;
+    padding: 18px;
+    border-radius: 12px;
+    text-align: right;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-family: monospace;
+    border: 1px solid var(--border);
+    text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.calc-grid button {
+    padding: 16px 0;
+    font-size: 1.1rem;
+    background: var(--bg-surface);
+    color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: none;
+}
+
+.calc-grid button:hover { 
+    background: #191d2a; 
+    border-color: var(--border-glow);
+}
+
+.calc-grid button.op-btn { 
+    color: var(--accent); 
+    font-weight: 600;
+}
+.calc-grid button.op-btn:hover {
+    background: rgba(0, 210, 255, 0.05);
+    border-color: rgba(0, 210, 255, 0.2);
+}
+
+.calc-grid button.eq-btn { 
+    background: var(--accent); 
+    color: #040811; 
+    font-weight: 700; 
+}
+.calc-grid button.eq-btn:hover { 
+    background: var(--accent-hover);
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+/* Modal Backdrop */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(4, 6, 10, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal img {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 210, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+</style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="span-full app-header">
+            <img src="png.2.png" alt="Logo" class="app-logo">
+            <h1>MHS Wallet</h1>
+        </div>
+
+        <div class="card span-full">
+            <div class="stats-grid">
+                <div class="stat-item expense">
+                    <div class="stat-label">Today</div>
+                    <div class="stat-val" id="today-total">$0.00</div>
+                </div>
+                <div class="stat-item expense">
+                    <div class="stat-label">This Month</div>
+                    <div class="stat-val" id="month-total">$0.00</div>
+                </div>
+                <div class="stat-item income">
+                    <div class="stat-label">Owed to Me</div>
+                    <div class="stat-val" id="owe-me-total">$0.00</div>
+                </div>
+                <div class="stat-item expense">
+                    <div class="stat-label">I Owe</div>
+                    <div class="stat-val" id="i-owe-total">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Add New Expense</h2>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="exp-desc" placeholder="Rent, suppliers, tools..." required>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="exp-amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="exp-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Attach Receipt / Screenshot</label>
+                    <input type="file" id="exp-img" accept="image/*">
+                </div>
+                <button type="submit" class="btn-primary">Save Expense</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Calculator</h2>
+            <div class="calc-wrapper">
+                <div id="calc-screen">0</div>
+                <div class="calc-grid">
+                    <button onclick="clearCalc()" class="btn-danger" style="padding:16px;">C</button>
+                    <button onclick="pressCalc('/')" class="op-btn">/</button>
+                    <button onclick="pressCalc('*')" class="op-btn">*</button>
+                    <button onclick="pressCalc('-')" class="op-btn">-</button>
+                    <button onclick="pressCalc('7')">7</button>
+                    <button onclick="pressCalc('8')">8</button>
+                    <button onclick="pressCalc('9')">9</button>
+                    <button onclick="pressCalc('+')" class="op-btn">+</button>
+                    <button onclick="pressCalc('4')">4</button>
+                    <button onclick="pressCalc('5')">5</button>
+                    <button onclick="pressCalc('6')">6</button>
+                    <button onclick="calculateResult()" class="eq-btn">=</button>
+                    <button onclick="pressCalc('1')">1</button>
+                    <button onclick="pressCalc('2')">2</button>
+                    <button onclick="pressCalc('3')">3</button>
+                    <button onclick="pressCalc('0')">0</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Expense History</h2>
+            <div class="list-container" id="expense-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>People Ledger</h2>
+            <form id="ledger-form" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Person's Name</label>
+                    <input type="text" id="ledger-name" placeholder="Contact Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Amount ($)</label>
+                    <input type="number" id="ledger-amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Account Relationship</label>
+                    <select id="ledger-type">
+                        <option value="owe-me">They owe me money (+)</option>
+                        <option value="i-owe">I owe them money (-)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Add Entry</button>
+            </form>
+
+            <div class="list-container" id="ledger-list"></div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="img-modal" onclick="this.style.display='none'">
+        <img id="modal-target" src="" alt="Expanded Preview">
+    </div>
+    <script>
+
+    // App State Management using persistent LocalStorage
+let expenses = JSON.parse(localStorage.getItem('mhs_expenses')) || [];
+let ledger = JSON.parse(localStorage.getItem('mhs_ledger')) || [];
+
+// Auto-set the date picker to today's local date
+document.getElementById('exp-date').valueAsDate = new Date();
+
+// Sync current data to LocalStorage and refresh the interface
+function syncStorage() {
+    localStorage.setItem('mhs_expenses', JSON.stringify(expenses));
+    localStorage.setItem('mhs_ledger', JSON.stringify(ledger));
+    renderUI();
+}
+
+// Global PKR Currency Formatter (Handles Lakhs & Crores formatting structure)
+function formatPKR(amount) {
+    return 'Rs. ' + parseFloat(amount).toLocaleString('en-PK', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+    });
+}
+
+function renderUI() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const currentMonthStr = todayStr.substring(0, 7);
+
+    let todayTotal = 0, monthTotal = 0, oweMeTotal = 0, iOweTotal = 0;
+
+    // Render Core Expense Stream
+    const expList = document.getElementById('expense-list');
+    expList.innerHTML = expenses.length === 0 ? '<div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px;">No expenses logged yet.</div>' : '';
+    
+    expenses.forEach((exp, idx) => {
+        const amt = parseFloat(exp.amount) || 0;
+        if (exp.date === todayStr) todayTotal += amt;
+        if (exp.date.substring(0, 7) === currentMonthStr) monthTotal += amt;
+
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+            <div class="item-details">
+                <div class="title">${exp.desc}</div>
+                <div class="meta">${exp.date}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                ${exp.img ? `<img src="${exp.img}" class="img-preview" onclick="viewImage('${exp.img}')">` : ''}
+                <div style="font-weight: 600; font-variant-numeric: tabular-nums;">${formatPKR(amt)}</div>
+                <button class="btn-action btn-danger" onclick="deleteExpense(${idx})">Remove</button>
+            </div>
+        `;
+        expList.appendChild(div);
+    });
+
+    // Render Mutual Peer Debts (Ledger)
+    const ledgerList = document.getElementById('ledger-list');
+    ledgerList.innerHTML = ledger.length === 0 ? '<div style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px;">No open counter-balances.</div>' : '';
+
+    ledger.forEach((item, idx) => {
+        const amt = parseFloat(item.amount) || 0;
+        const isOwedToMe = item.type === 'owe-me';
+        if (isOwedToMe) oweMeTotal += amt; else iOweTotal += amt;
+
+        const div = document.createElement('div');
+        div.className = 'item-row';
+        div.innerHTML = `
+            <div class="item-details">
+                <div class="title">${item.name}</div>
+                <div class="meta">${isOwedToMe ? 'Owes you money' : 'You owe them'}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-weight: 700; color: ${isOwedToMe ? 'var(--success)' : 'var(--danger)'}">
+                    ${formatPKR(amt)}
+                </div>
+                <button class="btn-action btn-primary" style="background:rgba(16,185,129,0.15); color:var(--success);" onclick="deleteLedger(${idx})">Settle</button>
+            </div>
+        `;
+        ledgerList.appendChild(div);
+    });
+
+    // Update Dashboard Card Aggregates with PKR Currency Formatting
+    document.getElementById('today-total').innerText = formatPKR(todayTotal);
+    document.getElementById('month-total').innerText = formatPKR(monthTotal);
+    document.getElementById('owe-me-total').innerText = formatPKR(oweMeTotal);
+    document.getElementById('i-owe-total').innerText = formatPKR(iOweTotal);
+}
+
+// Action Handlers
+document.getElementById('expense-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const desc = document.getElementById('exp-desc').value;
+    const amount = document.getElementById('exp-amount').value;
+    const date = document.getElementById('exp-date').value;
+    const fileInput = document.getElementById('exp-img');
+
+    const entry = { desc, amount, date, img: null };
+
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            entry.img = evt.target.result;
+            expenses.unshift(entry);
+            syncStorage();
+            resetForm();
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        expenses.unshift(entry);
+        syncStorage();
+        resetForm();
+    }
+});
+
+function resetForm() {
+    document.getElementById('expense-form').reset();
+    document.getElementById('exp-date').valueAsDate = new Date();
+}
+
+document.getElementById('ledger-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('ledger-name').value;
+    const amount = document.getElementById('ledger-amount').value;
+    const type = document.getElementById('ledger-type').value;
+
+    ledger.unshift({ name, amount, type });
+    syncStorage();
+    this.reset();
+});
+
+function deleteExpense(idx) { expenses.splice(idx, 1); syncStorage(); }
+function deleteLedger(idx) { ledger.splice(idx, 1); syncStorage(); }
+
+function viewImage(src) {
+    const m = document.getElementById('img-modal');
+    document.getElementById('modal-target').src = src;
+    m.style.display = 'flex';
+}
+
+// Calculator Engine
+let calcVal = '';
+const screen = document.getElementById('calc-screen');
+
+function pressCalc(v) { calcVal += v; screen.innerText = calcVal; }
+function clearCalc() { calcVal = ''; screen.innerText = '0'; }
+function calculateResult() {
+    try {
+        if(calcVal) {
+            calcVal = Function('"use strict";return (' + calcVal + ')')().toString();
+            screen.innerText = calcVal;
+        }
+    } catch (err) { screen.innerText = 'Error'; calcVal = ''; }
+}
+
+// PWA Service Worker Registration Configuration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Service Worker Configured Successfully'))
+            .catch(err => console.log('Registration Failed', err));
+    });
+}
+
+// Initialize the App view on load
+renderUI();
+</script>
+</body>
+</html>
